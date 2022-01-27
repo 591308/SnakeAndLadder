@@ -86,7 +86,7 @@ public class Game {
                         board.getPlayers().put(player.getId(), 1);
                     }
                 } //end of if roll 6 and not locked
-                if (player.getFanget() == true) { //if locked and roll 6
+                if (player.getFanget() == true && counter == 0) { //if locked and roll 6
                     System.out.println(player.getName() + " rolled " + roll + " you can start playing again");
                     player.setFanget(false);
                 }//end if locked and roll is 6
