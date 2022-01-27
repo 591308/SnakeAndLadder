@@ -1,9 +1,10 @@
-public class Ladder {
+package main.java;
+public class Snake {
 
-    private int start;
-    private int end;
+    private final int start;
+    private final int end;
 
-    public Ladder(int start, int end) {
+    public Snake(int start, int end) {
         this.start = start;
         this.end = end;
     }

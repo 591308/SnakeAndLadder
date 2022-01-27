@@ -1,9 +1,11 @@
+package main.java;
+
 import java.util.UUID;
 
 public class Player {
 
-    private String name;
-    private String id;
+    private final String name;
+    private final String id;
     private boolean fanget;
 
     public Player(String name) {
@@ -20,7 +22,7 @@ public class Player {
         return id;
     }
 
-    public boolean getFanget() {
+    public boolean isFanget() {
         return fanget;
     }
 

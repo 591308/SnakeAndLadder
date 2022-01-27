@@ -1,3 +1,5 @@
+package main.java;
+
 import java.util.*;
 
 public class Game {
@@ -6,6 +8,7 @@ public class Game {
     private int initialNrOfPlayers;
     private Queue<Player> players;
     public static final int DEFAULT_BOARD_SIZE = 100;
+    private int counter = 0;
 
     public Game(int size) {
         this.board = new Board(size);
@@ -50,54 +53,40 @@ public class Game {
         return currentPlayerCounter < initialNrOfPlayers;
     }
 
-    public void startGame() throws InterruptedException {
-        while (!isGameCompleted()) {
-            int diceVal = valueOfDice();
-            Player currentPlayer = players.poll();
-            movePlayer(currentPlayer, diceVal);
-            Thread.sleep(100);
-            if (hasPlayerWon(currentPlayer)) {
-                System.out.println(currentPlayer.getName() + " has won!");
-                board.getPlayers().remove(currentPlayer.getId());
-            } else {
-                players.add(currentPlayer);
-            }
-        }
-    }
-
-    int counter = 0;
-
     private void movePlayer(Player player, int roll) {
+
         int oldPos = board.getPlayers().get(player.getId());
         int newPos = oldPos + roll;
-        int boardSize = board.getSize();
 
-        if(newPos <= boardSize) {
-            if (roll == 6) {
-                if(!player.getFanget()){ //
-                    if (counter < 3) {
-                        counter++;
-                        System.out.println(player.getName() + " rolled " + roll + " roll again!");
-                        movePlayer(player, valueOfDice());
-                    }
-                    if (counter == 3) {
-                        System.out.println(player.getName() + " rolled " + roll + ", " + counter + " times in a row, go to starting square");
-                        player.setFanget(true);
-                        board.getPlayers().put(player.getId(), 1);
-                    }
-                } //end of if roll 6 and not locked
-                if (player.getFanget() == true && counter == 0) { //if locked and roll 6
-                    System.out.println(player.getName() + " rolled " + roll + " you can start playing again");
-                    player.setFanget(false);
-                }//end if locked and roll is 6
-            } //end of if roll 6
+        int boardsize = board.getSize();
+
+        if(newPos <= boardsize) {
+
+            if(roll == 6 && player.isFanget() == true) {
+                System.out.println(player.getName() + " rolled " + roll + " you can start playing again");
+                board.getPlayers().put(player.getId(), 1);
+                player.setFanget(false);
+            }
+
+            if(roll == 6 && player.isFanget() == false && counter < 3) {
+                counter++;
+                System.out.println(player.getName() + " rolled " + roll + " roll again! Roll in a row [" + counter + "]");
+                movePlayer(player, valueOfDice());
+            }
+            if(roll == 6 && player.isFanget() == false && counter == 3) {
+                System.out.println(player.getName() + " rolled " + roll + ", " + counter + " times in a row, go to pos 1");
+                board.getPlayers().put(player.getId(), 1);
+                player.setFanget(true);
+            }
+            // if player roll 6 and is not locked
             counter = 0;
-            if (roll != 6) {
 
-                if (player.getFanget() == true) {
-                    System.out.println(player.getName() + " rolled " + roll + " need to roll 6 to start playing again");
-                    newPos = board.getPlayers().put(player.getId(), 1).intValue();
-                }
+            if (roll != 6 && player.isFanget() == true) {
+                System.out.println(player.getName() + " rolled " + roll + " need to roll 6 to start playing again");
+                board.getPlayers().put(player.getId(), 1);
+            }
+            if (roll != 6 && player.isFanget() == false) {
+
                 board.getPlayers().put(player.getId(), newPos);
                 System.out.println(player.getName() + " rolled " + roll + " and moved from [" + oldPos + "] to [" + newPos + "]");
 
@@ -115,6 +104,22 @@ public class Game {
                     }
                 } // end for ladders and snakes
             } // end of roll!=6
+        } else{
+            System.out.println(player.getName() + " rolled bigger number than board size, player stays in place");
+        }
+    }
+    public void startGame() throws InterruptedException {
+        while (!isGameCompleted()) {
+            int diceVal = valueOfDice();
+            Player currentPlayer = players.poll();
+            movePlayer(currentPlayer, diceVal);
+            Thread.sleep(100);
+            if (hasPlayerWon(currentPlayer)) {
+                System.out.println(currentPlayer.getName() + " has won!");
+                board.getPlayers().remove(currentPlayer.getId());
+            } else {
+                players.add(currentPlayer);
+            }
         }
     }
 }

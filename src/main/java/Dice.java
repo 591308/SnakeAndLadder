@@ -1,3 +1,4 @@
+package main.java;
 public class Dice {
 
     public static int roll() {
